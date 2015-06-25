@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -17,8 +18,8 @@ public class MainActivity extends ActionBarActivity {
     private ViewPager mViewPager;
     private AdverPagerAdapter mAdapter;
     private final int DEFAULT_COUNT = 4;
-    private final int RETURN_COUNT = 100;
-    private int[] imageRecource = {R.mipmap.ic_launcher, R.mipmap.pic, R.mipmap.pic, R.mipmap.pic};
+    private final int RETURN_COUNT = 20;
+    private int[] imageRecource = {R.mipmap.image1, R.mipmap.image2, R.mipmap.image3, R.mipmap.image4};
     private int screenWidth, screeHeight;
 
     @Override
@@ -33,9 +34,9 @@ public class MainActivity extends ActionBarActivity {
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         screenWidth = metrics.widthPixels;
         screeHeight = metrics.heightPixels;
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(screenWidth, screeHeight / 4);
-        mViewPager.setLayoutParams(params);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth, screeHeight / 6);
+        mViewPager.setLayoutParams(params);
         mAdapter = new AdverPagerAdapter(this);
         mViewPager.setAdapter(mAdapter);
     }
@@ -66,16 +67,22 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             position %= DEFAULT_COUNT;
+            L.e("position=" + position, true);
             View view = LayoutInflater.from(mContext).inflate(R.layout.image_item, container, false);
             ImageView imageview = (ImageView) view.findViewById(R.id.image_item);
             imageview.setImageResource(imageRecource[position]);
-            container.addView(imageview);
-            return imageview;
+            container.addView(view);
+            return view;
         }
 
         @Override
         public void finishUpdate(ViewGroup container) {
-            super.finishUpdate(container);
+            int position = mViewPager.getCurrentItem();
+            L.d("finishUpdate before,position=" + position, true);
+            if(position==RETURN_COUNT-1){
+                position=DEFAULT_COUNT-1;
+                mViewPager.setCurrentItem(position,false);
+            }
         }
     }
 }
